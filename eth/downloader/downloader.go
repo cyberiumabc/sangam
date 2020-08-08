@@ -623,7 +623,7 @@ func (d *Downloader) fetchHeight(p *peerConnection) (*types.Header, error) {
 				return nil, errBadPeer
 			}
 			head := headers[0]
-			if (d.mode == FastSync || d.mode == LightSync) { //&& head.Number.Uint64() < d.checkpoint 
+			if (d.mode == FastSync || d.mode == LightSync) && head.Number.Uint64() < d.checkpoint {
 				p.log.Warn("Remote head below checkpoint", "number", head.Number, "hash", head.Hash(), "Rhead", d.checkpoint)
 				return nil, errUnsyncedPeer
 			}
@@ -773,6 +773,7 @@ func (d *Downloader) findAncestor(p *peerConnection, remoteHeader *types.Header)
 				expectNumber := from + int64(i)*int64(skip+1)
 				if number := header.Number.Int64(); number != expectNumber {
 					p.log.Warn("Head headers broke chain ordering", "index", i, "requested", expectNumber, "received", number)
+					log.Warn("Failed 776")
 					return 0, errInvalidChain
 				}
 			}
@@ -987,6 +988,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 				filled, proced, err := d.fillHeaderSkeleton(from, headers)
 				if err != nil {
 					p.log.Debug("Skeleton chain invalid", "err", err)
+					log.Warn("Failed 991")
 					return errInvalidChain
 				}
 				headers = filled[proced:]
@@ -1207,6 +1209,7 @@ func (d *Downloader) fetchParts(deliveryCh chan dataPack, deliver func(dataPack)
 				// Deliver the received chunk of data and check chain validity
 				accepted, err := deliver(packet)
 				if err == errInvalidChain {
+					log.Warn("Failed 1211")
 					return err
 				}
 				// Unless a peer delivered something completely else than requested (usually
@@ -1472,6 +1475,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 							rollback = append(rollback, chunk[:n]...)
 						}
 						log.Debug("Invalid header encountered", "number", chunk[n].Number, "hash", chunk[n].Hash(), "err", err)
+						log.Warn("Failed 1476")
 						return errInvalidChain
 					}
 					// All verifications passed, store newly found uncertain headers
@@ -1705,6 +1709,7 @@ func (d *Downloader) commitFastSyncData(results []*fetchResult, stateSync *state
 	}
 	if index, err := d.blockchain.InsertReceiptChain(blocks, receipts, d.ancientLimit); err != nil {
 		log.Debug("Downloaded item processing failed", "number", results[index].Header.Number, "hash", results[index].Header.Hash(), "err", err)
+		log.Warn("Failed 1708")
 		return errInvalidChain
 	}
 	return nil
