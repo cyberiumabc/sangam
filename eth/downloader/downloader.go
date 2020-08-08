@@ -988,7 +988,7 @@ func (d *Downloader) fetchHeaders(p *peerConnection, from uint64, pivot uint64) 
 				filled, proced, err := d.fillHeaderSkeleton(from, headers)
 				if err != nil {
 					p.log.Debug("Skeleton chain invalid", "err", err)
-					log.Warn("Failed 991")
+					log.Warn("Failed 991","err", err)
 					return errInvalidChain
 				}
 				headers = filled[proced:]
