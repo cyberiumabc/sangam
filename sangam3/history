@@ -1,8 +1,0 @@
-
-admin.addPeer("self=enode://9c1abc27487be5d1c54108b83112017efecc440ba59ebe8b6c25749dacd14f218fc4ba93081bb9d9317731a1906e61cccc7ced3d7000423b7cd873d3a21a9846@192.168.0.3:30303")
-admin.addPeer("enode://9c1abc27487be5d1c54108b83112017efecc440ba59ebe8b6c25749dacd14f218fc4ba93081bb9d9317731a1906e61cccc7ced3d7000423b7cd873d3a21a9846@192.168.0.3:30303")
-admin.peers
-miner.start(1)
-eth.syncing
-admin.peers
-eth.syncing
